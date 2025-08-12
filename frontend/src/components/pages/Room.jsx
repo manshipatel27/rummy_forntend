@@ -422,14 +422,14 @@ const GameRoom = () => {
     });
 
     socketService.onServerEvent("playerDisconnected", (data) => {
-      console.log("Player disconnected:", data);
+      // console.log("Player disconnected:", data);
       dispatch(playerDisconnected({ playerId: data.playerId }));
       if (data.message) toast(data.message);
 
       if (data.playerId === userData?._id) {
         setIsReconnecting(true);
         setTimeout(() => {
-          attemptReconnect();
+          attemptReconnect();     //sd
         }, 2000);
       }
     });
