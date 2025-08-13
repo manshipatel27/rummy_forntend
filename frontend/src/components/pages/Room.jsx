@@ -626,7 +626,7 @@ const GameRoom = () => {
   if (gameState.status === "ended") {
     return (
       <div className="min-h-screen bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: `url(${bgImg})` }}>
-        <div className="absolute inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
+        {/* <div className="absolute inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center"> */}
           <div className="text-center text-white space-y-4">
             <h1 className="text-3xl font-bold">
               {String(gameState.winnerId) === String(userData._id)
@@ -666,7 +666,7 @@ const GameRoom = () => {
               </div>
             )} */}
 
- {gameState.scores.map((score) => {
+ {/* {gameState.scores.map((score) => {
   const isYou = String(score.playerId) === String(userData._id);
   const isWinner = String(score.playerId) === String(gameState.winnerId);
 
@@ -678,7 +678,7 @@ const GameRoom = () => {
       }`}
     >
       <span className="font-medium">
-        {isYou ? "You" : `Player ${score.playerId}`}
+        {isYou ? "You" : `${score.playerName}`}
         {isWinner && " 🏆"}
       </span>
       <span className="font-semibold">
@@ -691,7 +691,42 @@ const GameRoom = () => {
       </span>
     </div>
   );
-})} 
+})}  */}
+{[...gameState.scores]
+  .sort((a, b) => (String(a.playerId) === String(gameState.winnerId) ? -1 : 1)) // ✅ winner first
+  .map((score) => {
+    const isYou = String(score.playerId) === String(userData._id);
+    const isWinner = String(score.playerId) === String(gameState.winnerId);
+    const isLoser = !isWinner;
+    
+    // Calculate deduction for losers (assuming entryFee is known)
+    const entryFee = reduxRoom?.entryFee || 0;
+    const lossAmount = isLoser && entryFee > 0 ? `(-₹${entryFee})` : null;
+
+    return (
+      <div
+        key={score.playerId}
+        className={`flex justify-between items-center px-4 py-3 rounded-lg w-[300px] mx-auto
+          ${isWinner ? "bg-green-900/70 text-green-300" : "bg-red-900/70 text-red-300"}`}
+      >
+        <span className="font-medium flex items-center gap-1">
+          {isYou ? "You" : score.playerName}
+          {isWinner && " 🏆"}
+        </span>
+        
+        <span className="font-semibold text-right">
+          {score.score} points
+          {isWinner && score.prize > 0 && (
+            <span className="ml-2 text-yellow-300">(+₹{score.prize})</span>
+          )}
+          {isLoser && lossAmount && (
+            <span className="ml-2 text-red-500">{lossAmount}</span>
+          )}
+        </span>
+      </div>
+    );
+  })}
+
 
 {/* {gameState.players.map((player) => {
   const isYou = player.userId === userData._id;
@@ -723,18 +758,14 @@ const GameRoom = () => {
     </div>
   );
 })} */}
-
-
-
-
-            <button
+       <button
               onClick={() => navigate("/")}
               className="px-4 py-2 bg-yellow-500 text-black rounded"
             >
               Back to Lobby
             </button>
           </div>
-        </div>
+        {/* </div> */}
       </div>
     );
   }

@@ -125,12 +125,12 @@ socketService.onServerEvent("cardDrawn", ({ drawnCard, hand, deckSize }) => {
 });
 
 socketService.onServerEvent("gameOver", (data) => {
-  console.log("⚡ Game over received", data);
+  console.log("Game over received", data);
   dispatch(setGameOver({ 
     winnerId: data.winnerId, 
     message: data.message, 
     scores: data.scores,
-    prizeWon: data.prizeWon  
+    prize: data.prizeWon  
   }));
 });
 
